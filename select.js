@@ -7,8 +7,6 @@ var pool = require("typedarray-pool")
 var ndarray = require("ndarray")
 var cwise = require("cwise")
 
-window.imshow = require("ndarray-imshow")
-
 var selectRange = cwise({
   args: [
       "array", 
