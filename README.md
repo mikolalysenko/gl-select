@@ -26,7 +26,7 @@ Creates a select buffer with the given shape
 
 Begins a selection pass for finding the closest point in the buffer to `x,y`
 
-* `x` and `y` are the coordinates of the point which are being selected in screen space
+* `x` and `y` are the coordinates of the query point starting from the top-left of the screen
 * `radius` is the radius in pixels to search
 
 #### `select.end()`

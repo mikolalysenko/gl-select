@@ -7,6 +7,8 @@ var pool = require("typedarray-pool")
 var ndarray = require("ndarray")
 var cwise = require("cwise")
 
+window.imshow = require("ndarray-imshow")
+
 var selectRange = cwise({
   args: [
       "array", 
@@ -28,8 +30,8 @@ var selectRange = cwise({
       var d2 = dx*dx + dy*dy
       if(d2 < this.closestD2) {
         this.closestD2 = d2
-        this.closestX = x
-        this.closestY = y
+        this.closestX = idx[0]
+        this.closestY = idx[1]
       }
     }
   },
@@ -65,7 +67,7 @@ Object.defineProperty(proto, "shape", {
     var c = this.fbo.shape[1]
     if(r*c*4 > this.buffer.length) {
       pool.free(this.buffer)
-      this.buffer = poool.mallocUint8(r*c*4)
+      this.buffer = pool.mallocUint8(r*c*4)
     }
     return v
   }
@@ -99,13 +101,14 @@ proto.begin = function(x, y, radius) {
 proto.end = function() {
   var gl = this.gl
   if(this.dims[0] > 0 && this.dims[1] > 0) {
-    gl.readPixels(this.offset[1], this.offset[0], this.dims[0], this.dims[1], gl.RGBA, gl.UNSIGNED_BYTE, this.buffer)
+    gl.readPixels(this.offset[1], this.shape[0]-this.offset[0]-this.dims[0], this.dims[1], this.dims[0], gl.RGBA, gl.UNSIGNED_BYTE, this.buffer)
   }
   gl.bindFramebuffer(gl.FRAMEBUFFER, null)
   if(this.dims[0] <= 0 || this.dims[1] <= 0) {
     return null
   }
   var region = ndarray(this.buffer, [this.dims[0], this.dims[1], 4])
+  this.region = region
   var closest = selectRange(region.hi(region.shape[0], region.shape[1], 1), this.target[0], this.target[1])
   var dx = closest[0]
   var dy = closest[1]
@@ -118,7 +121,7 @@ proto.end = function() {
   var c3 = region.get(dx, dy, 3)
   dx = (dx + this.offset[0])|0
   dy = (dy + this.offset[1])|0
-  return new SelectResult(dx, dy, c0 + (c1<<8) + (c2<<16) + (c3<<24), Math.sqrt(closest[2]))
+  return new SelectResult(dy, dx, c0 + (c1<<8) + (c2<<16) + (c3<<24), Math.sqrt(closest[2]))
 }
 
 proto.dispose = function() {
