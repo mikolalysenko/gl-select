@@ -38,9 +38,10 @@ var selectRange = cwise({
   }
 })
 
-function SelectResult(x, y, id, distance) {
+function SelectResult(x, y, id, value, distance) {
   this.coord = [x, y]
   this.id = id
+  this.value = value
   this.distance = distance
 }
 
@@ -119,7 +120,7 @@ proto.end = function() {
   var c3 = region.get(dx, dy, 3)
   dx = (dx + this.offset[0])|0
   dy = (dy + this.offset[1])|0
-  return new SelectResult(dy, dx, c0 + (c1<<8) + (c2<<16) + (c3<<24), Math.sqrt(closest[2]))
+  return new SelectResult(dy, dx, c0, [c1, c2, c3], Math.sqrt(closest[2]))
 }
 
 proto.dispose = function() {

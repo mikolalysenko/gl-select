@@ -36,7 +36,8 @@ Finishes the selection pass.
 **Returns** An object whose properties encode the result of the closest point to the query point within radius, or `null` if no points are found.  The properties of this object are:
 
 * `coord` A length 2 array representing the coordinates of the closest pixel
-* `id` The 32 bit identifier of the closest point
+* `id` The 8 bit identifier of the closest point
+* `value` a 3 component vector storing the value of the selection
 * `distance` The distance of the closest point to the selection point
 
 #### `select.dispose()`
